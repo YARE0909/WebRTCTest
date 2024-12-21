@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import Image from "next/image";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
 
@@ -113,23 +114,35 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen p-4">
-      <div className="w-full border-b">
-        <h1 className="text-2xl font-bold mb-4">Video Calling App</h1>
-      </div>
+    <div className="flex flex-col h-screen bg-black">
       {!connected && (
-        <button
-          onClick={placeCall}
-          disabled={connected}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 z-50"
-        >
-          Start a Call
-        </button>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 rounded-md border border-gray-600 flex flex-col items-center space-y-4">
+          <div>
+            <h1 className="font-bold text-2xl">Meet Your Virtual Receptionist!</h1>
+          </div>
+          <div>
+            <Image
+              src="/images/virtualReceptionist.png"
+              width={200}
+              height={200}
+              alt="Virtual Receptionist"
+            />
+          </div>
+          <button
+            onClick={placeCall}
+            disabled={connected}
+            className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 z-50 duration-500"
+          >
+            Start a Call
+          </button>
+        </div>
       )}
-      <div className="flex mb-4">
-      </div>
-      <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
-      <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
+      {connected && (
+        <>
+          <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
+          <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
+        </>
+      )}
     </div>
   );
 }

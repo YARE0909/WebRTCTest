@@ -125,40 +125,56 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen p-4">
-      <div className="w-full border-b">
-        <h1 className="text-2xl font-bold mb-4">Video Calling App</h1>
-      </div>
-      <div className="w-full flex">
+    <div className="flex flex-col min-h-screen">
+      <div className="w-full h-screen flex">
         <div className="w-3/4 h-full relative">
-          <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
-          <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
+          {connected ? (
+            <>
+              <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
+              <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
+            </>
+          ) : (
+            <div className="w-full h-full justify-center items-center flex">
+              <div className="w-64 border-2 border-dashed border-gray-600 rounded-md p-4 flex items-center justify-center">
+                <h1 className="text-gray-500 font-bold">Not In A Call</h1>
+              </div>
+            </div>
+          )}
         </div>
-        <div className="p-4">
-          <h2 className="text-lg font-semibold">Active Calls</h2>
+        <div className="w-1/4 h-full border-l-2 border-l-gray-600 flex flex-col space-y-4 p-4">
+          <div className="w-full flex justify-between items-center border-b-2 border-b-gray-600 pb-2">
+            <div>
+              <h1 className="text-lg font-bold">Active Calls</h1>
+            </div>
+            {connected && (
+              <button
+                onClick={endCall}
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                End Call
+              </button>
+            )}
+          </div>
           <ul>
-            {activeCalls.map((call: any) => (
-              <li key={call.callId} className="flex justify-between items-center mb-2">
-                <span>Call from {call.from}</span>
+            {activeCalls.length > 0 ? activeCalls.map((call: any) => (
+              <li key={call.callId} className="flex justify-between items-center border-b-2 border-gray-600 pb-2">
+                <h1>{call.from}</h1>
                 <button
                   onClick={() => joinCall(call.callId, call.from)}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                 >
                   Join Call
                 </button>
               </li>
-            ))}
+            )) : (
+              <div className="w-full border-2 border-dashed border-gray-600 rounded-md p-4 justify-center items-center flex">
+                <h1 className="text-gray-500 font-bold">No Calls Pending</h1>
+              </div>
+            )}
           </ul>
         </div>
       </div>
-      {connected && (
-        <button
-          onClick={endCall}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          End Call
-        </button>
-      )}
+
 
     </div>
   );
