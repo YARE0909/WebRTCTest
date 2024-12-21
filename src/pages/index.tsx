@@ -98,7 +98,10 @@ export default function Home() {
         if (data.type === 'activeCalls') {
           setActiveCalls(data.activeCalls);
         } else if (data.type === 'callEnded') {
-          endCall();
+          resetCallState();
+          setActiveCalls((prevCalls) =>
+            prevCalls.filter((call) => call.callId !== data.callId)
+          );
         }
       };
 
