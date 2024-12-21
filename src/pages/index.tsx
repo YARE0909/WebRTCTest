@@ -58,6 +58,9 @@ export default function Home() {
     if (currentCallId) {
       wsRef.current?.send(JSON.stringify({ type: 'endCall', callId: currentCallId }));
       resetCallState();
+      setActiveCalls((prevCalls) =>
+        prevCalls.filter((call) => call.callId !== currentCallId)
+      );
     }
   };
 
