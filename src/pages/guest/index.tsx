@@ -13,7 +13,7 @@ export default function Home() {
   const peerRef = useRef<Peer | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
-  const joinCall = (callId: string, from: string) => {
+  const placeCall = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -21,26 +21,14 @@ export default function Home() {
           localVideoRef.current.srcObject = stream;
           localVideoRef.current.play();
         }
-        const call = peerRef.current?.call(from, stream);
-        call?.on('stream', (remoteStream: any) => {
-          if (remoteVideoRef.current) {
-            remoteVideoRef.current.srcObject = remoteStream;
-            remoteVideoRef.current.play();
-          }
-        });
-
-        wsRef.current?.send(JSON.stringify({ type: 'joinCall', from: peerId, callId }));
-        setCurrentCallId(callId);
         setConnected(true);
+
+        // Notify the server about the new call
+        const callId = `${peerId}-${Date.now()}`;
+        wsRef.current?.send(JSON.stringify({ type: 'call', from: peerId, callId }));
+        setCurrentCallId(callId);
       })
       .catch(console.error);
-  };
-
-  const endCall = () => {
-    if (currentCallId) {
-      wsRef.current?.send(JSON.stringify({ type: 'endCall', callId: currentCallId }));
-      resetCallState();
-    }
   };
 
   const resetCallState = () => {
@@ -125,41 +113,23 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen p-4">
+    <div className="flex flex-col h-screen p-4">
       <div className="w-full border-b">
         <h1 className="text-2xl font-bold mb-4">Video Calling App</h1>
       </div>
-      <div className="w-full flex">
-        <div className="w-3/4 h-full relative">
-          <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
-          <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
-        </div>
-        <div className="p-4">
-          <h2 className="text-lg font-semibold">Active Calls</h2>
-          <ul>
-            {activeCalls.map((call: any) => (
-              <li key={call.callId} className="flex justify-between items-center mb-2">
-                <span>Call from {call.from}</span>
-                <button
-                  onClick={() => joinCall(call.callId, call.from)}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                >
-                  Join Call
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      {connected && (
+      {!connected && (
         <button
-          onClick={endCall}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          onClick={placeCall}
+          disabled={connected}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 z-50"
         >
-          End Call
+          Start a Call
         </button>
       )}
-
+      <div className="flex mb-4">
+      </div>
+      <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
+      <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
     </div>
   );
 }
