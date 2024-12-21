@@ -58,9 +58,6 @@ export default function Home() {
     if (currentCallId) {
       wsRef.current?.send(JSON.stringify({ type: 'endCall', callId: currentCallId }));
       resetCallState();
-      setActiveCalls((prevCalls) =>
-        prevCalls.filter((call) => call.callId !== currentCallId)
-      );
     }
   };
 
@@ -81,6 +78,15 @@ export default function Home() {
       stream.getTracks().forEach((track) => track.stop());
       remoteVideoRef.current.srcObject = null;
     }
+
+    setActiveCalls(
+      activeCalls.map((call) => {
+        if (call.callId === currentCallId) {
+          return { ...call, active: false };
+        }
+        return call;
+      })
+    )
   };
 
   useEffect(() => {
@@ -102,9 +108,6 @@ export default function Home() {
           setActiveCalls(data.activeCalls);
         } else if (data.type === 'callEnded') {
           resetCallState();
-          setActiveCalls((prevCalls) =>
-            prevCalls.filter((call) => call.callId !== data.callId)
-          );
         }
       };
 
