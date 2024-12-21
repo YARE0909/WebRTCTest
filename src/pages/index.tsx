@@ -13,59 +13,6 @@ export default function Home() {
   const peerRef = useRef<Peer | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
-  useEffect(() => {
-    const peer = new Peer();
-
-    peer.on('open', (id) => {
-      setPeerId(id);
-      console.log(`My peer ID is: ${id}`);
-
-      // Connect to WebSocket server and register
-      const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL || '');
-      ws.onopen = () => {
-        ws.send(JSON.stringify({ type: 'register', peerId: id }));
-      };
-
-      ws.onmessage = (event: { data: string }) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'activeCalls') {
-          setActiveCalls(data.activeCalls);
-        } else if (data.type === 'callEnded') {
-          resetCallState();
-        }
-      };
-
-      wsRef.current = ws;
-    });
-
-    peer.on('call', (call: any) => {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          if (localVideoRef.current) {
-            localVideoRef.current.srcObject = stream;
-            localVideoRef.current.play();
-          }
-          call.answer(stream);
-          call.on('stream', (remoteStream: any) => {
-            if (remoteVideoRef.current) {
-              remoteVideoRef.current.srcObject = remoteStream;
-              remoteVideoRef.current.play();
-            }
-          });
-        })
-        .catch(console.error);
-    });
-
-    peerRef.current = peer;
-
-    return () => {
-      peer.disconnect();
-      peer.destroy();
-      wsRef.current?.close();
-    };
-  }, []);
-
   const placeCall = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
@@ -133,6 +80,58 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    const peer = new Peer();
+
+    peer.on('open', (id) => {
+      setPeerId(id);
+      console.log(`My peer ID is: ${id}`);
+
+      // Connect to WebSocket server and register
+      const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL || '');
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'register', peerId: id }));
+      };
+
+      ws.onmessage = (event: { data: string }) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'activeCalls') {
+          setActiveCalls(data.activeCalls);
+        } else if (data.type === 'callEnded') {
+          endCall();
+        }
+      };
+
+      wsRef.current = ws;
+    });
+
+    peer.on('call', (call: any) => {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          if (localVideoRef.current) {
+            localVideoRef.current.srcObject = stream;
+            localVideoRef.current.play();
+          }
+          call.answer(stream);
+          call.on('stream', (remoteStream: any) => {
+            if (remoteVideoRef.current) {
+              remoteVideoRef.current.srcObject = remoteStream;
+              remoteVideoRef.current.play();
+            }
+          });
+        })
+        .catch(console.error);
+    });
+
+    peerRef.current = peer;
+
+    return () => {
+      peer.disconnect();
+      peer.destroy();
+      wsRef.current?.close();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
