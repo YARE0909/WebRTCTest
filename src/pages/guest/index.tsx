@@ -13,6 +13,7 @@ export default function Home() {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerRef = useRef<Peer | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const placeCall = () => {
     navigator.mediaDevices
@@ -28,6 +29,7 @@ export default function Home() {
         const callId = `${peerId}-${Date.now()}`;
         wsRef.current?.send(JSON.stringify({ type: 'call', from: peerId, callId }));
         setCurrentCallId(callId);
+        setLoading(true);
       })
       .catch(console.error);
   };
@@ -79,6 +81,9 @@ export default function Home() {
           setActiveCalls(data.activeCalls);
         } else if (data.type === 'callEnded') {
           resetCallState();
+        } else if (data.type === 'joinCall') {
+          console.log('Host Joined Call', data);
+          setLoading(false);
         }
       };
 
@@ -114,35 +119,57 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-black">
-      {!connected && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 rounded-md border border-gray-600 flex flex-col items-center space-y-4">
-          <div>
-            <h1 className="font-bold text-2xl">Meet Your Virtual Receptionist!</h1>
-          </div>
-          <div>
-            <Image
-              src="/images/virtualReceptionist.png"
-              width={200}
-              height={200}
-              alt="Virtual Receptionist"
-            />
-          </div>
-          <button
-            onClick={placeCall}
-            disabled={connected}
-            className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 z-50 duration-500"
-          >
-            Start a Call
-          </button>
+    <div className="flex flex-col h-screen overflow-hidden bg-black">
+      <div className="w-full h-full flex-col">
+        <div className="absolute w-full bg-black/80 border-b border-gray-600 flex justify-between p-4">
+          <Image
+            src="https://oliveliving.com/_nuxt/img/pinkinnerlogo.d6ddf2b.svg"
+            width={100}
+            height={50}
+            alt="Logo"
+          />
         </div>
-      )}
-      {connected && (
-        <>
-          <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover z-50" muted />
-          <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
-        </>
-      )}
-    </div>
+        {loading && (
+          <div className="w-full h-full bg-black flex flex-col items-center justify-center">
+            <h1 className="text-white text-2xl font-bold">Please wait while the receptionist connects.</h1>
+            <h1 className="text-white text-2xl font-bold">
+              Thank you for your patience.
+            </h1>
+          </div>
+        )}
+      </div>
+      {
+        !connected && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 rounded-md border border-gray-600 flex flex-col items-center space-y-4">
+            <div>
+              <h1 className="font-bold text-2xl">Meet Your Virtual Receptionist!</h1>
+            </div>
+            <div>
+              <Image
+                src="/images/virtualReceptionist.png"
+                width={200}
+                height={200}
+                alt="Virtual Receptionist"
+              />
+            </div>
+            <button
+              onClick={placeCall}
+              disabled={connected}
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 z-50 duration-500"
+            >
+              Start a Call
+            </button>
+          </div>
+        )
+      }
+      {
+        connected && !loading && (
+          <>
+            <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full shadow-2xl bottom-4 right-4 object-cover z-50" muted />
+            <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
+          </>
+        )
+      }
+    </div >
   );
 }
