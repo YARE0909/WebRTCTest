@@ -139,7 +139,7 @@ export default function Home() {
       )}
       {connected && (
         <>
-          <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
+          <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover z-50" muted />
           <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
         </>
       )}

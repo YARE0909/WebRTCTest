@@ -130,7 +130,6 @@ export default function Home() {
         <div className="w-3/4 h-full relative">
           {connected ? (
             <>
-              <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full border bottom-4 right-4 object-cover" muted />
               <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
             </>
           ) : (
@@ -149,7 +148,7 @@ export default function Home() {
             {connected && (
               <button
                 onClick={endCall}
-                className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
               >
                 End Call
               </button>
