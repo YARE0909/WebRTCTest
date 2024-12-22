@@ -11,7 +11,7 @@ npm install
 Create a .env file in root directly and paste the below
 
 ```bash
-NEXT_PUBLIC_WS_URL=ws://localhost:8080
+NEXT_PUBLIC_WS_URL=ws://orion-web-server-production.up.railway.app
 ```
 
 ## Finally, run the development server:
