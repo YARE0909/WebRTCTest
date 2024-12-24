@@ -2,18 +2,24 @@
 import Image from "next/image";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
+import { parseCookies } from 'nookies'
+import { useRouter } from "next/router";
+import convertToTitleCase from "@/utils/titleCase";
 
 export default function Home() {
   const [peerId, setPeerId] = useState<string>('');
   const [connected, setConnected] = useState<boolean>(false);
   const [activeCalls, setActiveCalls] = useState<any[]>([]);
   const [currentCallId, setCurrentCallId] = useState<string | null>(null);
+  const [user, setUser] = useState<any | null>(null);
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerRef = useRef<Peer | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const placeCall = () => {
     navigator.mediaDevices
@@ -63,7 +69,15 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const peer = new Peer();
+    const cookies = parseCookies();
+    const { user } = cookies;
+
+    if (!user) {
+      router.push('/');
+    }
+    setUser(user);
+
+    const peer = new Peer(user);
 
     peer.on('open', (id) => {
       setPeerId(id);
@@ -121,13 +135,16 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-black">
       <div className="w-full h-full flex-col">
-        <div className="absolute w-full bg-black/80 border-b border-gray-600 flex justify-between p-4">
+        <div className="w-ful h-16 flex items-center gap-3 p-4 border-b-2 border-b-gray-600">
           <Image
             src="https://oliveliving.com/_nuxt/img/pinkinnerlogo.d6ddf2b.svg"
             width={100}
             height={50}
             alt="Logo"
           />
+          <div className="w-full flex items-center justify-center">
+            <h1 className="font-bold text-xl">Welcome To {user && convertToTitleCase(user)}</h1>
+          </div>
         </div>
         {loading && (
           <div className="w-full h-full bg-black flex flex-col items-center justify-center">
@@ -155,9 +172,9 @@ export default function Home() {
             <button
               onClick={placeCall}
               disabled={connected}
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 z-50 duration-500"
+              className="w-full font-bold bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 z-50 duration-500"
             >
-              Start a Call
+              Meet Virtual Receptionist
             </button>
           </div>
         )
@@ -165,7 +182,7 @@ export default function Home() {
       {
         connected && !loading && (
           <>
-            <video ref={localVideoRef} className="w-64 h-64 bg-black absolute rounded-full shadow-2xl bottom-4 right-4 object-cover z-50" muted />
+            <video ref={localVideoRef} className="h-64 bg-black absolute rounded-md shadow-2xl bottom-4 right-4 object-cover z-50" muted />
             <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
           </>
         )
