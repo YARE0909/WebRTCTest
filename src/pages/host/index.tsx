@@ -217,7 +217,7 @@ export default function Home() {
                   key={call.callId}
                   className="flex justify-between items-center border-b-2 border-gray-600 pb-2"
                 >
-                  <h1>{convertToTitleCase(call.from)}</h1>
+                  <h1>{convertToTitleCase(call.from)} Calling...</h1>
                   {call.active ? (
                     <button
                       onClick={endCall}
