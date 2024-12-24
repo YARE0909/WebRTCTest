@@ -94,6 +94,8 @@ export default function Home() {
         if (data.type === 'activeCalls') {
           setActiveCalls(data.activeCalls);
         } else if (data.type === 'callEnded') {
+          console.log("Current call id:", currentCallIdRef.current);
+          console.log("Call id:", data.callId);
           if (data.callId === currentCallIdRef.current) {
             console.log("Current call has ended:", data.callId);
             resetCallState();
