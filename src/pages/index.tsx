@@ -33,7 +33,7 @@ const Index = () => {
   }
 
   return (
-    <div className='w-full h-screen flex items-center justify-center bg-black'>
+    <div className='w-full h-screen flex items-center justify-center bg-black text-white'>
       <div className='flex flex-col space-y-4 items-center border border-gray-600 rounded-md p-4'>
         <div className=''>
           <h1 className='font-bold text-3xl'>Login To Orion</h1>
