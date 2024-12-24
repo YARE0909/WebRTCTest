@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import { setCookie } from 'nookies'
+import convertToTitleCase from '@/utils/titleCase';
 
 const Index = () => {
   const [username, setUsername] = useState('');
@@ -15,14 +16,8 @@ const Index = () => {
         path: '/',
       })
       router.push('/host')
-    } else if (username === 'olive_indiranagar' && password === 'guest') {
-      setCookie(null, 'user', 'olive_indiranagar', {
-        maxAge: 30 * 24 * 60 * 60,
-        path: '/',
-      })
-      router.push('/guest')
-    } else if (username === 'olive_whitefield' && password === 'guest') {
-      setCookie(null, 'user', 'olive_whitefield', {
+    } else if (password === 'guest') {
+      setCookie(null, 'user', convertToTitleCase(username), {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
       })
