@@ -218,7 +218,7 @@ export default function Home() {
                   className="flex justify-between items-center border-b-2 border-gray-600 pb-2"
                 >
                   <h1>{convertToTitleCase(call.from)} Calling...</h1>
-                  {call.active ? (
+                  {call.callId === currentCallId ? (
                     <button
                       onClick={endCall}
                       className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
