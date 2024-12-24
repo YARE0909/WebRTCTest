@@ -28,22 +28,22 @@ const Index = () => {
 
   return (
     <div className='w-full h-screen flex items-center justify-center bg-black text-white'>
-      <div className='flex flex-col space-y-4 items-center border border-gray-600 rounded-md p-4'>
-        <div className=''>
+      <div className='w-96 flex flex-col space-y-4 items-center border border-gray-600 rounded-md p-4'>
+        <div className='w-full'>
           <h1 className='font-bold text-3xl'>Login To Orion</h1>
         </div>
-        <div>
-          <input type='text' placeholder='Username' className='border border-gray-600 rounded-md p-2 bg-black outline-none' onChange={
+        <div className='w-full'>
+          <input type='text' placeholder='Username' className='w-full border border-gray-600 rounded-md p-2 bg-black outline-none' onChange={
             (e) => setUsername(e.target.value)
           } />
         </div>
-        <div>
-          <input type='password' placeholder='Password' className='border border-gray-600 rounded-md p-2 bg-black outline-none' onChange={
+        <div className='w-full'>
+          <input type='password' placeholder='Password' className='w-full border border-gray-600 rounded-md p-2 bg-black outline-none' onChange={
             (e) => setPassword(e.target.value)
           } />
         </div>
-        <div>
-          <button className='bg-blue-500 text-white p-2 rounded-md' onClick={handleSubmit}>Login</button>
+        <div className='w-full'>
+          <button className='w-full bg-blue-500 text-white px-4 py-2 font-bold rounded-md' onClick={handleSubmit}>Login</button>
         </div>
       </div>
     </div>

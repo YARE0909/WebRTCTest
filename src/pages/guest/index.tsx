@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
-import { parseCookies } from "nookies";
+import { destroyCookie, parseCookies } from "nookies";
 import { useRouter } from "next/router";
 import convertToTitleCase from "@/utils/titleCase";
 
@@ -67,6 +67,11 @@ export default function Home() {
     );
     currentCallIdRef.current = null; // Reset the ref to null
   };
+
+  const handleLogOut = () => {
+    destroyCookie(null, 'user');
+    router.push('/');
+  }
 
   useEffect(() => {
     const cookies = parseCookies();
@@ -140,15 +145,18 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-black text-white">
       <div className="w-full h-full flex-col">
-        <div className="w-ful h-16 flex items-center gap-3 p-4 border-b-2 border-b-gray-600">
+        <div className="w-ful h-16 flex items-center justify-between gap-3 p-4 border-b-2 border-b-gray-600">
           <Image
             src="https://oliveliving.com/_nuxt/img/pinkinnerlogo.d6ddf2b.svg"
             width={100}
             height={50}
             alt="Logo"
           />
-          <div className="w-full flex items-center justify-center">
+          <div className="absolute w-fit top-0 left-1/2 -translate-x-1/2 h-16 flex items-center justify-center">
             <h1 className="font-bold text-xl">Welcome To {user && convertToTitleCase(user)}</h1>
+          </div>
+          <div>
+            <button className="rounded-md bg-red-500 px-4 py-1 font-bold" onClick={handleLogOut}>Log Out</button>
           </div>
         </div>
         {loading && (

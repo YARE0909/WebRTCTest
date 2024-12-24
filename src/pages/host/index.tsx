@@ -2,7 +2,7 @@
 import convertToTitleCase from "@/utils/titleCase";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { parseCookies } from "nookies";
+import { destroyCookie, parseCookies } from "nookies";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
 
@@ -108,6 +108,11 @@ export default function Home() {
     )
   };
 
+  const handleLogOut = () => {
+    destroyCookie(null, 'user');
+    router.push('/');
+  }
+
   useEffect(() => {
     const cookies = parseCookies();
     const { user } = cookies;
@@ -205,9 +210,12 @@ export default function Home() {
           )}
         </div>
         <div className="w-1/4 h-full border-l-2 border-l-gray-600 flex flex-col space-y-4">
-          <div className="w-full h-16 flex items-center gap-3 p-4 border-b-2 border-b-gray-600">
+          <div className="w-full h-16 flex justify-between items-center gap-3 p-4 border-b-2 border-b-gray-600">
             <div>
               <h1 className="font-bold text-xl">Active Calls</h1>
+            </div>
+            <div>
+              <button className="rounded-md bg-red-500 px-4 py-1 font-bold" onClick={handleLogOut}>Log Out</button>
             </div>
           </div>
           <ul className="p-4 flex flex-col gap-2">
