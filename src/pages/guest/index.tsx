@@ -93,7 +93,8 @@ export default function Home() {
         const data = JSON.parse(event.data);
         if (data.type === 'activeCalls') {
           setActiveCalls(data.activeCalls);
-        } else if (data.type === 'callEnded' && data.callId === currentCallId) {
+        } else if (data.type === 'callEnded') {
+          console.log(data.callId);
           resetCallState();
         } else if (data.type === 'joinCall') {
           console.log('Host Joined Call', data);
