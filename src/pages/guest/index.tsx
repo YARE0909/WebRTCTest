@@ -133,7 +133,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-black">
+    <div className="flex flex-col h-screen overflow-hidden bg-black text-white">
       <div className="w-full h-full flex-col">
         <div className="w-ful h-16 flex items-center gap-3 p-4 border-b-2 border-b-gray-600">
           <Image
