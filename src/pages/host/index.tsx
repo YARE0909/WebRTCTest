@@ -188,7 +188,7 @@ export default function Home() {
               alt="Logo"
             />
             <div className="w-full flex items-center justify-center">
-              <h1 className="font-bold text-xl">Welcome To Olive Head Office</h1>
+              <h1 className="font-bold text-2xl">Welcome To Olive Head Office</h1>
             </div>
           </div>
           {connected ? (
@@ -199,7 +199,7 @@ export default function Home() {
           ) : (
             <div className="w-full h-full justify-center items-center flex">
               <div className="w-64 border-2 border-dashed border-gray-600 rounded-md p-4 flex items-center justify-center">
-                <h1 className="text-gray-500 font-bold">Not In A Call</h1>
+                <h1 className="text-gray-500 font-bold">Not In Call</h1>
               </div>
             </div>
           )}
@@ -237,7 +237,7 @@ export default function Home() {
               ))
             ) : (
               <div className="w-full border-2 border-dashed border-gray-600 rounded-md p-4 justify-center items-center flex">
-                <h1 className="text-gray-500 font-bold">No Calls Pending</h1>
+                <h1 className="text-gray-500 font-bold">No Incoming Calls</h1>
               </div>
             )}
           </ul>
