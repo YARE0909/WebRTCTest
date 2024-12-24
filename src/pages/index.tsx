@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import { setCookie } from 'nookies'
-import convertToTitleCase from '@/utils/titleCase';
 
 const Index = () => {
   const [username, setUsername] = useState('');
@@ -17,7 +16,7 @@ const Index = () => {
       })
       router.push('/host')
     } else if (password === 'guest') {
-      setCookie(null, 'user', convertToTitleCase(username), {
+      setCookie(null, 'user', username, {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
       })
