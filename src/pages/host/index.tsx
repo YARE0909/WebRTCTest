@@ -20,6 +20,12 @@ export default function Home() {
   const wsRef = useRef<WebSocket | null>(null);
 
   const joinCall = (callId: string, from: string) => {
+
+    if (connected) {
+      alert("Please end the current call before joining another.");
+      return;
+    }
+
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -73,6 +79,7 @@ export default function Home() {
       );
     }
   };
+
   const resetCallState = () => {
     setConnected(false);
     setCurrentCallId(null);
@@ -186,7 +193,7 @@ export default function Home() {
           </div>
           {connected ? (
             <>
-              <video ref={localVideoRef} className="h-64 bg-black absolute rounded-md shadow-2xl bottom-4 right-4 object-cover z-50" muted />
+              {/* <video ref={localVideoRef} className="h-64 bg-black absolute rounded-md shadow-2xl bottom-4 right-4 object-cover z-50" muted /> */}
               <video ref={remoteVideoRef} className="w-full h-full bg-black object-cover" />
             </>
           ) : (
