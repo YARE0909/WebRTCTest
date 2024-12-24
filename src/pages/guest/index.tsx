@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
-import { parseCookies } from 'nookies'
+import { parseCookies } from "nookies";
 import { useRouter } from "next/router";
 import convertToTitleCase from "@/utils/titleCase";
 
@@ -10,14 +10,14 @@ export default function Home() {
   const [peerId, setPeerId] = useState<string>('');
   const [connected, setConnected] = useState<boolean>(false);
   const [activeCalls, setActiveCalls] = useState<any[]>([]);
-  const [currentCallId, setCurrentCallId] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerRef = useRef<Peer | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const currentCallIdRef = useRef<string | null>(null); // Ref for currentCallId
 
   const router = useRouter();
 
@@ -33,8 +33,8 @@ export default function Home() {
 
         // Notify the server about the new call
         const callId = `${peerId}-${Date.now()}`;
+        currentCallIdRef.current = callId; // Set the ref to the new callId
         wsRef.current?.send(JSON.stringify({ type: 'call', from: peerId, callId }));
-        setCurrentCallId(callId);
         setLoading(true);
       })
       .catch(console.error);
@@ -42,7 +42,6 @@ export default function Home() {
 
   const resetCallState = () => {
     setConnected(false);
-    setCurrentCallId(null);
 
     // Stop all tracks in the local video stream
     if (localVideoRef.current && localVideoRef.current.srcObject) {
@@ -60,12 +59,13 @@ export default function Home() {
 
     setActiveCalls(
       activeCalls.map((call) => {
-        if (call.callId === currentCallId) {
+        if (call.callId === currentCallIdRef.current) {
           return { ...call, active: false };
         }
         return call;
       })
-    )
+    );
+    currentCallIdRef.current = null; // Reset the ref to null
   };
 
   useEffect(() => {
@@ -94,12 +94,10 @@ export default function Home() {
         if (data.type === 'activeCalls') {
           setActiveCalls(data.activeCalls);
         } else if (data.type === 'callEnded') {
-          if (data.callId === currentCallId) {
-            console.log("True");
+          if (data.callId === currentCallIdRef.current) {
+            console.log("Current call has ended:", data.callId);
+            resetCallState();
           }
-          console.log("Current Call ID", currentCallId);
-          console.log(data.callId);
-          resetCallState();
         } else if (data.type === 'joinCall') {
           console.log('Host Joined Call', data);
           setLoading(false);
